@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6 p-3">
+      <div id="item-wrapper">
+        <img class="mb-3 img-fluid" id="item-image">
+        <h1 class="mb-3">Name: <span id="item-name"></span></h1>
+        <p class="mb-3">Price: <span id="item-price"></span></p>
+
+      </div>
+    </div>
+    <div class="col-lg-6 p-3">
+      <div id="payment-wrapper">
+        <div id="payment-method"></div>
+        <div id="agreement"></div>
+        <div class="p-3 w-100">
+          <button id="payment-request-button" class="btn btn-primary w-100">결제하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+  const itemId = new URLSearchParams(location.search).get('id')
+  const clientKey = 'test_ck_Gv6LjeKD8abL6vGlDnb43wYxAdXy'
+
+  const paymentWidget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS)
+  const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+    '#payment-method',
+    {
+      value: 0,
+      currency: 'KRW',
+      country: 'KR'
+    },
+    { variantKey: 'widgetA' }
+  )
+  const paymentAgreement = paymentWidget.renderAgreement(
+    '#agreement',
+    { variantKey: 'AGREEMENT' }
+  )
+
+  const paymentRequestButton = document.getElementById('payment-request-button');
+  paymentRequestButton.addEventListener('click', () => {
+    try {
+      paymentWidget.requestPayment({
+        orderId: crypto.randomUUID().replaceAll('-', ''),
+        orderName: `${itemId}-${document.getElementById('item-name').innerText}`,
+      }).then(async data => {
+          const response = await fetch('/toss/confirm-payment', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              paymentKey: data.paymentKey,
+              orderId: data.orderId,
+              amount: data.amount
+            }),
+          })
+          if (response.ok) {
+            location.pathname = '/static/success.html'
+          }
+      });
+    } catch (err) {
+      if (err.code === 'USER_CANCEL') {
+        alert('사용자 결제 취소')
+      }
+      else alert(err)
+    }
+  });
+
+
+  fetch(`/items/${itemId}`,).then(async response => {
+    if (!response.ok) location.href = '/static/items.html'
+    const body = await response.json()
+    document.getElementById('item-image').src = body.imageUrl
+    document.getElementById('item-name').innerText = body.name
+    document.getElementById('item-price').innerText = body.price
+    paymentMethodsWidget.updateAmount(body.price)
+  })
+
+</script>
+</body>
+</html>
