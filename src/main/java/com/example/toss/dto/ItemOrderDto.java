@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+// 응답 객체로 반환하기 위해 사용
 public class ItemOrderDto {
   private Long id;
   private Long itemId;

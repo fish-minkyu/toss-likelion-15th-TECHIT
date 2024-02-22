@@ -20,10 +20,12 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-// TossHttpService을 실제로 사용하는 OrderService
+// TossHttpService을 실제로 사용하는 OrderService + OrderRepository의 Service
 public class OrderService {
   private final TossHttpService tossService;
+  // 어떤 아이템을 구매했는지 정보를 받기 위해 DI
   private final ItemRepository itemRepository;
+  // 주문을 저장하기 위해 DI
   private final OrderRepository orderRepository;
 
   // 결제 승인을 위한 메서드
@@ -36,6 +38,7 @@ public class OrderService {
     String orderName = ((LinkedHashMap<String, Object>) tossPaymentObj)
             .get("orderName").toString();
     // 2. orderName에서 itemId를 회수하고, 그에 해당하는 Item 엔티티를 조회한다.
+    // Long으로 변환: Long.parseLong()
     Long itemId = Long.parseLong(orderName.split("-")[0]);
     Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -65,6 +68,7 @@ public class OrderService {
   }
 
   // readTossPayment
+  // : tossPayment 객체를 읽기 위한 메서드, 어떤 카드 or 간편 결제로 했는지 확인시켜주는 메서드
   public Object readTossPayment(Long id) {
     // 1. id를 가지고 주문정보를 조회한다.
     ItemOrder order = orderRepository.findById(id)
@@ -94,3 +98,5 @@ public class OrderService {
       return tossService.cancelPayment(order.getTossPaymentKey(), dto);
   }
 }
+// Http 요청을 보내는 Spring Boot의 방식들의 결과는 모두 JSON 객체면 LinkedHashMap<>()으로 번역
+// 배열이면 ArrayList<>()로 데이터가 해석이 된다.
