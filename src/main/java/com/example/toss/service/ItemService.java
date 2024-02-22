@@ -16,6 +16,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     public ItemService(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
+        // itemRepository가 비어있을 때 4개의 상품 생성
         if(this.itemRepository.count() == 0) {
             this.itemRepository.saveAll(List.of(
                     Item.builder()

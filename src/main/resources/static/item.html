@@ -41,8 +41,9 @@
 <script>
   const itemId = new URLSearchParams(location.search).get('id')
   // Client Key 들어가는 곳
-  const clientKey = 'test_ck_5OWRapdA8dPNMqbYJ2mR8o1zEqZK'
+  const clientKey = 'test_ck_vZnjEJeQVxK6nnZe0pjP3PmOoBN0'
 
+  // PaymentWidget.ANONYMOUS: 비로그인 사용자
   const paymentWidget = PaymentWidget(clientKey, PaymentWidget.ANONYMOUS)
   const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
     '#payment-method',
