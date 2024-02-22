@@ -16,18 +16,18 @@ import java.util.List;
 @RequestMapping("items")
 @RequiredArgsConstructor
 public class ItemController {
-    private final ItemService itemService;
+  private final ItemService itemService;
 
-    @GetMapping
-    public List<ItemDto> readAll() {
-        return itemService.readAll();
-    }
+  @GetMapping
+  public List<ItemDto> readAll() {
+    return itemService.readAll();
+  }
 
-    @GetMapping("{id}")
-    public ItemDto readOne(
-            @PathVariable("id")
-            Long id
-    ) {
-        return itemService.readOne(id);
+  @GetMapping("{id}")
+  public ItemDto readOne(
+    @PathVariable("id")
+    Long id
+  ) {
+      return itemService.readOne(id);
     }
 }
