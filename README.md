@@ -24,10 +24,15 @@ Server가 토스 페이먼츠의 결제 승인 API에게 요청을 보내는 부
 
 <div>OrderRepository</div>
 <div>ItemOrderDto</div>
+<div>PaymentCancelDto</div>
 <div>OrderService</div>
 <div>OrderController</div>
 
 </details>
+
+// Http 요청을 보내는 Spring Boot의 방식들의 결과는 모두 JSON 객체면 LinkedHashMap<>()으로 번역
+// 배열이면 ArrayList<>()로 데이터가 해석이 된다.
+dirty checking(Transactional <- 알아보기)
 
 ## 스팩
 

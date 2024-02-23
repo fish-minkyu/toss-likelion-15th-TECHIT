@@ -28,7 +28,7 @@ public class OrderService {
   // 주문을 저장하기 위해 DI
   private final OrderRepository orderRepository;
 
-  // 결제 승인을 위한 메서드
+  // 결제 승인을 위한 메서드 + 주문 생성
   public Object confirmPayment(PaymentConfirmDto dto) {
     // HTTP 요청이 toss 서버에게 보내진다.
     Object tossPaymentObj = tossService.confirmPayment(dto);
@@ -94,7 +94,7 @@ public class OrderService {
                       -> new ResponseStatusException(HttpStatus.NOT_FOUND));
       // 2. 주문정보를 갱신한다.
       order.setStatus("CANCEL");
-      // 3. 취소후 결과를 응답한다.
+      // 3. 취소후 결과를 응답한다. (결제가 확실히 취소되었다는 걸 알 수 있다.)
       return tossService.cancelPayment(order.getTossPaymentKey(), dto);
   }
 }
