@@ -14,4 +14,4 @@ spring:
     show-sql: true
 
 toss:
-  secret: test_sk_yL0qZ4G1VO1G4bBW4dMO8oWb2MQY
+  secret: <toss-secret>
